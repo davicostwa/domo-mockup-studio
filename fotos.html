@@ -238,7 +238,8 @@ async function initBases(){
   bases=manifest.map(m=>{const mv=JSON.stringify(m.areas);const s=saved[m.id];const use=s&&s.mv===mv?s.areas:m.areas;
     return {...m,builtin:true,mv,areas:use.map(a=>({...AREA_DEF,...a}))};});
   for(const [id,s] of Object.entries(saved)){if(s.user){const src=await DB.get('img-'+id);if(src)bases.push({...s,src,areas:s.areas.map(a=>({...AREA_DEF,...a}))});}}
-  const cur=localStorage.getItem('fotos-cur');B=bases.find(b=>b.id===cur)||bases[0]||null;
+  const want=new URLSearchParams(location.search).get('base');
+  const cur=want||localStorage.getItem('fotos-cur');B=bases.find(b=>b.id===cur)||bases[0]||null;
 }
 function saveBases(){const o={};bases.forEach(b=>{o[b.id]={id:b.id,name:b.name,categoria:b.categoria,user:!b.builtin,mv:b.mv,areas:b.areas};});
   try{localStorage.setItem('fotos-bases',JSON.stringify(o));if(B)localStorage.setItem('fotos-cur',B.id);}catch(e){}}

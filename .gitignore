@@ -1,0 +1,15 @@
+# configurações locais do editor/assistente
+.claude/
+
+# arquivos locais de kits (fontes comerciais e versões privadas)
+kits/**/*.local.json
+kits/**/*.woff
+kits/**/*.woff2
+kits/**/*.ttf
+kits/**/*.otf
+
+# sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+.vercel

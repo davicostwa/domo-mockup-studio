@@ -1,0 +1,50 @@
+[
+  {
+    "id": "cartoes-tecido", "name": "Cartões · tecido", "src": "bases/cartoes-tecido.jpg", "categoria": "Papelaria",
+    "areas": [
+      { "corners": [[0.182,0.384],[0.709,0.296],[0.829,0.510],[0.268,0.608]],
+        "piece": "cardFront", "bgRole": "none", "inkRole": "clara", "finish": 0, "finishes": [0,1,2],
+        "scale": 1, "layoutVar": 0, "cyl": 0, "arc": 0, "radius": 0.01, "opacity": 0.96, "light": 0.9, "texture": 1.0, "disp": 0.1, "gloss": 0.2, "feather": 0.002 }
+    ]
+  },
+  {
+    "id": "bone-costas", "name": "Boné · costas", "src": "bases/bone-costas.jpg", "categoria": "Vestuário",
+    "areas": [
+      { "corners": [[0.405,0.322],[0.705,0.300],[0.715,0.398],[0.412,0.418]],
+        "piece": "wordmark", "bgRole": "none", "inkRole": "clara", "finish": 3, "finishes": [3,0],
+        "scale": 0.8, "layoutVar": 0, "cyl": 0.35, "arc": 0.12, "radius": 0, "opacity": 0.95, "light": 1.0, "texture": 0.8, "disp": 0.6, "gloss": 0.15, "feather": 0.004 }
+    ]
+  },
+  {
+    "id": "camiseta-peito", "name": "Camiseta · peito", "src": "bases/camiseta-peito.jpg", "categoria": "Vestuário",
+    "areas": [
+      { "corners": [[0.36,0.31],[0.64,0.31],[0.64,0.45],[0.36,0.45]],
+        "piece": "logo", "bgRole": "none", "inkRole": "clara", "finish": 0, "finishes": [0,3],
+        "scale": 0.8, "layoutVar": 0, "cyl": 0.2, "arc": 0, "radius": 0, "opacity": 0.92, "light": 1.0, "texture": 1.4, "disp": 0.9, "gloss": 0.05, "feather": 0.004 }
+    ]
+  },
+  {
+    "id": "sacola", "name": "Sacola · concreto", "src": "bases/sacola.jpg", "categoria": "Embalagem",
+    "areas": [
+      { "corners": [[0.393,0.445],[0.705,0.432],[0.709,0.650],[0.397,0.664]],
+        "piece": "logo", "bgRole": "none", "inkRole": "clara", "finish": 0, "finishes": [0,2,1],
+        "scale": 0.7, "layoutVar": 0, "cyl": 0, "arc": 0, "radius": 0, "opacity": 0.95, "light": 1.0, "texture": 1.0, "disp": 0.5, "gloss": 0.2, "feather": 0.003 }
+    ]
+  },
+  {
+    "id": "fachada-luminoso", "name": "Fachada · luminoso", "src": "bases/fachada-luminoso.jpg", "categoria": "Sinalização",
+    "areas": [
+      { "corners": [[0.162,0.131],[0.8386,0.131],[0.8386,0.249],[0.162,0.249]],
+        "piece": "lockupH", "bgRole": "none", "inkRole": "escura", "finish": 4, "finishes": [4],
+        "scale": 1.0, "layoutVar": 0, "cyl": 0, "arc": 0, "radius": 0, "opacity": 1, "light": 0.3, "texture": 0.2, "disp": 0, "gloss": 0, "feather": 0.001 }
+    ]
+  },
+  {
+    "id": "celular-mao", "name": "Celular · mão", "src": "bases/celular-mao.jpg", "categoria": "Digital",
+    "areas": [
+      { "corners": [[0.3885,0.2875],[0.6445,0.2875],[0.6445,0.7085],[0.3885,0.7085]],
+        "piece": "screen", "bgRole": "escura", "inkRole": "clara", "finish": 5, "finishes": [5],
+        "scale": 1, "layoutVar": 0, "cyl": 0, "arc": 0, "radius": 0.135, "opacity": 1, "light": 0.2, "texture": 0, "disp": 0, "gloss": 0.25, "feather": 0.001 }
+    ]
+  }
+]

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup Studio — DOMO Studio</title>
+<meta name="description" content="Gerador de mockups de marca no navegador: fotos realistas, cenas 3D e efeitos experimentais, a partir de um kit de marca.">
+<meta property="og:title" content="Mockup Studio — DOMO Studio">
+<meta property="og:description" content="Mockups de branding realistas, gerados no navegador a partir do kit da marca.">
+<meta property="og:image" content="bases/cartoes-tecido.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#0d0d0d;--line:#262626;--tx:#ecebe7;--mute:#8a8a86;--mono:"JetBrains Mono",ui-monospace,monospace;--sans:"Inter",system-ui,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.55 var(--sans)}
+a{color:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:28px 28px 64px}
+.top{display:flex;justify-content:space-between;font:12px var(--mono);color:var(--mute);letter-spacing:.02em}
+h1{font-weight:500;font-size:clamp(44px,8vw,112px);line-height:.95;letter-spacing:-.045em;margin:72px 0 18px}
+h1 b{font-weight:700}
+.lead{max-width:640px;color:#bdbcb7;font-size:18px;margin:0 0 56px}
+.grid{display:grid;grid-template-columns:1.35fr 1fr;gap:16px}
+.card{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:420px;border:1px solid var(--line);border-radius:22px;overflow:hidden;text-decoration:none;background:#151515;isolation:isolate}
+.card .bg{position:absolute;inset:0;background-size:cover;background-position:center;z-index:-2;transform:scale(1.02);transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(0,0,0,.82));z-index:-1}
+.card:hover .bg{transform:scale(1.06)}
+.card .in{padding:26px}
+.card .tag{font:11px var(--mono);color:#cfcfca;border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:3px 10px;display:inline-block;margin-bottom:14px;backdrop-filter:blur(6px)}
+.card h2{margin:0 0 6px;font-weight:600;font-size:28px;letter-spacing:-.02em}
+.card p{margin:0;color:#cfcfca;max-width:460px}
+.card .go{position:absolute;top:22px;right:22px;width:42px;height:42px;border-radius:50%;background:#f1f0ec;color:#111;display:grid;place-items:center;font-size:18px;transition:transform .3s}
+.card:hover .go{transform:rotate(-45deg)}
+.side{display:grid;gap:16px}
+.side .card{min-height:202px}
+.mosaic{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:16px 0 72px}
+.mosaic img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px;border:1px solid var(--line);filter:saturate(.9)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;border-top:1px solid var(--line);padding-top:28px}
+.steps h3{font:12px var(--mono);color:var(--mute);margin:0 0 8px;font-weight:400}
+.steps p{margin:0;color:#cfcfca}
+footer{margin-top:72px;display:flex;justify-content:space-between;font:12px var(--mono);color:var(--mute);border-top:1px solid var(--line);padding-top:18px;flex-wrap:wrap;gap:8px}
+@media (max-width:860px){.grid{grid-template-columns:1fr}.mosaic{grid-template-columns:repeat(3,1fr)}.steps{grid-template-columns:1fr}h1{margin-top:48px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><span>MOCKUP STUDIO — DOMO STUDIO</span><span>v1 · 2026</span></div>
+
+  <h1>Mockups de marca,<br><b>gerados no navegador.</b></h1>
+  <p class="lead">Você cadastra o kit da marca (logo, cores, fontes e textos) e o estúdio aplica tudo em fotos reais, cenas 3D e composições experimentais. Cada uma tem sliders, variações e exportação em alta resolução.</p>
+
+  <div class="grid">
+    <a class="card" href="fotos.html">
+      <div class="bg" style="background-image:url(bases/cartoes-tecido.jpg)"></div>
+      <span class="go">→</span>
+      <div class="in"><span class="tag">01 · Fotos realistas</span><h2>Motor de fotos</h2>
+        <p>A arte da marca entra em perspectiva sobre fotos e herda a luz, as dobras e a textura de cada superfície. Acabamentos de impressão, relevo seco, hot stamping, bordado, luminoso e tela.</p></div>
+    </a>
+    <div class="side">
+      <a class="card" href="mockups.html">
+        <div class="bg" style="background:radial-gradient(120% 90% at 70% 20%,#3a0d0f,#0d0d0d 70%)"></div>
+        <span class="go">→</span>
+        <div class="in"><span class="tag">02 · Cenas 3D</span><h2>Estúdio 3D</h2>
+          <p>Sete cenas 3D com câmera, luz e cores da marca. Exporta PNG até ×4 e vídeo MP4 em loop.</p></div>
+      </a>
+      <a class="card" href="thermal.html">
+        <div class="bg" style="background:linear-gradient(120deg,#12002c,#7a0a6a 35%,#e8461e 65%,#fde55a)"></div>
+        <span class="go">→</span>
+        <div class="in"><span class="tag">03 · Experimental</span><h2>Thermal / Motion Lab</h2>
+          <p>Câmera térmica e motion blur sobre imagens e tipografia, com variação generativa.</p></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="mosaic">
+    <img src="bases/cartoes-tecido.jpg" alt="Base: cartões sobre tecido" loading="lazy">
+    <img src="bases/bone-costas.jpg" alt="Base: boné de costas" loading="lazy">
+    <img src="bases/camiseta-peito.jpg" alt="Base: camiseta" loading="lazy">
+    <img src="bases/sacola.jpg" alt="Base: sacola" loading="lazy">
+    <img src="bases/fachada-luminoso.jpg" alt="Base: fachada com luminoso" loading="lazy">
+    <img src="bases/celular-mao.jpg" alt="Base: celular na mão" loading="lazy">
+  </div>
+
+  <div class="steps">
+    <div><h3>01 — Kit da marca</h3><p>No Estúdio 3D, crie um kit com logo, 4 cores, fontes (Google ou próprias) e os textos. Ele fica salvo no navegador e pode ser exportado em .json.</p></div>
+    <div><h3>02 — Base e encaixe</h3><p>Escolha uma foto base ou envie a sua. No modo ✎, arraste os 4 cantos até a superfície. Peça, cor e acabamento são definidos por área.</p></div>
+    <div><h3>03 — Variar e exportar</h3><p>R gera uma variação leve, Shift+R uma agressiva. Trave o que quiser manter e exporte uma base ou o pacote inteiro do cliente.</p></div>
+  </div>
+
+  <footer><span>Bases fotográficas geradas com IA (Google Flow) · cenas com Three.js</span><span>Kit de exemplo: Studio Niko Barber</span></footer>
+</div>
+</body>
+</html>

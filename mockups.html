@@ -771,13 +771,16 @@ function fitView(){const v=$('#view'),pad=96;const [bw,bh]=baseSize();const s=Ma
   out.style.width=Math.floor(bw*s)+'px';out.style.height=Math.floor(bh*s)+'px';$('#cRes').textContent=`${bw} × ${bh}`;}
 window.addEventListener('resize',()=>{fitView();dirty=true;});
 
+let PREVIEW=.75;const AQ={avg:16};
+// mede o tempo de cada quadro e ajusta a prévia entre 50% e 75%
+function adaptQ(ms){AQ.avg=AQ.avg*.85+ms*.15;if(AQ.avg>28&&PREVIEW>.5){PREVIEW=Math.max(.5,+(PREVIEW-.125).toFixed(3));AQ.avg=16;}else if(AQ.avg<11&&PREVIEW<.75){PREVIEW=Math.min(.75,+(PREVIEW+.125).toFixed(3));AQ.avg=16;}}
 let playing=false,time=0,last=performance.now(),exporting=false,exportingVideo=false;
 async function tick(now){
   const dt=Math.min(.1,(now-last)/1000);last=now;
   if(!exporting){
     if(needBuild&&!building) await rebuild();
     if(playing)time+=dt;
-    if(cur&&(playing||dirty)){renderFrame(.75,time);dirty=false;$('#cScene').textContent=SCENES[P.scene].label.toUpperCase();}
+    if(cur&&(playing||dirty)){const q0=performance.now();renderFrame(PREVIEW,time);if(playing)adaptQ(performance.now()-q0);dirty=false;$('#cScene').textContent=SCENES[P.scene].label.toUpperCase();}
   }
   requestAnimationFrame(tick);
 }

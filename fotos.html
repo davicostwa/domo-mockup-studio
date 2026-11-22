@@ -354,7 +354,7 @@ function syncUI(){
 }
 function buildStrip(){
   const st=$('#strip');st.innerHTML='';
-  bases.forEach(b=>{const d=document.createElement('div');d.className='th'+(b===B?' on':'');d.style.backgroundImage=`url("${b.src}")`;d.innerHTML=`<span>${b.name}</span>`;d.title=`${b.name} · ${b.categoria||''}`;d.onclick=()=>selectBase(b);st.appendChild(d);});
+  bases.forEach(b=>{const d=document.createElement('div');d.className='th'+(b===B?' on':'');d.style.backgroundImage=`url("${b.builtin?b.src.replace('bases/','bases/thumbs/'):b.src}")`;d.innerHTML=`<span>${b.name}</span>`;d.title=`${b.name} · ${b.categoria||''}`;d.onclick=()=>selectBase(b);st.appendChild(d);});
   const add=document.createElement('div');add.className='add';add.textContent='+';add.title='Adicionar foto base';add.onclick=addBase;st.appendChild(add);
 }
 let hist=[],redo=[],lastSnap='';

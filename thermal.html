@@ -825,7 +825,10 @@ window.addEventListener('resize',fitView);
 /* =========================================================
    LOOP
    ========================================================= */
-const PREVIEW=.75; // prévia leve; exportação continua em resolução cheia
+let PREVIEW=.75; // prévia leve e adaptativa; exportação continua em resolução cheia
+const AQ={avg:16};
+// mede o tempo de cada quadro e ajusta a prévia entre 50% e 75%
+function adaptQ(ms){ AQ.avg=AQ.avg*.85+ms*.15; if(AQ.avg>28&&PREVIEW>.5){PREVIEW=Math.max(.5,+(PREVIEW-.125).toFixed(3));AQ.avg=16;} else if(AQ.avg<11&&PREVIEW<.75){PREVIEW=Math.min(.75,+(PREVIEW+.125).toFixed(3));AQ.avg=16;} }
 let playing=true, time=0, last=performance.now(), exporting=false, lastFmt='';
 function tick(now){
   const dt=Math.min(.1,(now-last)/1000); last=now;
@@ -833,7 +836,7 @@ function tick(now){
     if(playing) time+=dt;
     if(P.format!==lastFmt){ lastFmt=P.format; dirty=true; }
     if(playing||dirty){
-      try{ renderFrame(PREVIEW,time); }catch(e){ console.error(e); }
+      try{ const q0=performance.now(); renderFrame(PREVIEW,time); adaptQ(performance.now()-q0); }catch(e){ console.error(e); }
       dirty=false; fitView();
       const ph=(time%P.loopDur)/P.loopDur;
       $('#cPhase').textContent=`${String(Math.floor(time/60)).padStart(2,'0')}:${String(Math.floor(time%60)).padStart(2,'0')} · φ ${ph.toFixed(2)}`;

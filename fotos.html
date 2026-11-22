@@ -12,7 +12,7 @@
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--tx);font:12px/1.35 var(--sans);overflow:hidden}
 #app{display:grid;grid-template-columns:1fr 372px;height:100vh}
-#stage{position:relative;display:grid;grid-template-rows:auto 1fr auto;min-width:0}
+#stage{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-width:0;height:100vh;overflow:hidden}
 .bar{display:flex;gap:6px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .brand{font-weight:600;margin-right:auto;display:flex;gap:10px;align-items:baseline}
 .brand small{color:var(--mute);font:11px var(--mono)}
@@ -26,9 +26,9 @@ button.on{background:#f1f0ec;color:#111;border-color:#f1f0ec}
 button.ghost{background:transparent}
 button.sm{padding:4px 9px;font-size:11px}
 .sep{width:1px;height:22px;background:var(--line);margin:0 4px}
-#view{position:relative;display:grid;place-items:center;overflow:hidden;padding:36px}
+#view{position:relative;display:grid;place-items:center;overflow:hidden;padding:36px;min-height:0;min-width:0}
 #wrap{position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6)}
-#gl,#ov{display:block}
+#gl,#ov{display:block;max-width:100%;max-height:100%}
 #ov{position:absolute;inset:0;pointer-events:none}
 #wrap.edit #ov{pointer-events:auto;cursor:crosshair}
 .corner{position:absolute;font:11px var(--mono);color:var(--mute);pointer-events:none}
@@ -599,7 +599,7 @@ let busy=false;
 async function tick(){
   if(!busy&&B&&baseImg){
     if(dirtyArt){busy=true;await buildAtlas();busy=false;}
-    if(dirty){const r=render();dirty=false;if(r){if(glc.style.width===''||Math.abs(parseFloat(glc.style.width)/parseFloat(glc.style.height)-r.W/r.H)>.01)fit();drawOverlay();$('#cRes').textContent=`${crop().W} × ${crop().H} px · ${B.name.toUpperCase()}`;}}
+    if(dirty){const r=render();dirty=false;if(r){fit();drawOverlay();$('#cRes').textContent=`${crop().W} × ${crop().H} px · ${B.name.toUpperCase()}`;}}
   }
   requestAnimationFrame(tick);
 }

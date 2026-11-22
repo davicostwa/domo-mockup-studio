@@ -10,7 +10,8 @@ Feito por **DOMO Studio**.
 
 | Página | O que faz |
 |---|---|
-| `index.html` | Página inicial com acesso às três ferramentas. |
+| `index.html` | Página inicial com acesso às ferramentas. |
+| `landing.html` | **Landing page em três passos** (marca, conteúdo, página). Monta a página na ordem do caminho de decisão de quem visita: quem é e onde fica, como funciona, preço às claras, avaliações, oferta, extras e fechamento. Mostra por que cada seção está naquela posição, avisa quando a ordem foge da recomendada, confere o contraste das cores e esconde seções sem conteúdo em vez de inventar dados. Exporta um único arquivo HTML responsivo, com imagens e fontes embutidas. |
 | `fotos.html` | **Motor de fotos.** Encaixa a arte em perspectiva sobre fotos base. A arte herda a luz, as dobras e a textura da superfície. Acabamentos: impressão, relevo seco, hot stamping (ouro, prata, cobre, grafite), bordado, luminoso e tela emissiva. |
 | `mockups.html` | **Estúdio 3D** (Three.js). Sete cenas: cartão sobre tecido, celular entre infláveis, celular com cordas, tablet, caixa de luz, garrafa e bordado. Também é onde os kits de marca são criados e editados. Exporta PNG até ×4 e vídeo MP4 em loop. |
 | `thermal.html` | **Thermal / Motion Lab.** Câmera térmica e motion blur em WebGL sobre imagens e tipografia, com exportação em PNG e MP4. |

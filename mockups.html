@@ -777,7 +777,7 @@ async function tick(now){
   if(!exporting){
     if(needBuild&&!building) await rebuild();
     if(playing)time+=dt;
-    if(cur&&(playing||dirty)){renderFrame(1,time);dirty=false;$('#cScene').textContent=SCENES[P.scene].label.toUpperCase();}
+    if(cur&&(playing||dirty)){renderFrame(.75,time);dirty=false;$('#cScene').textContent=SCENES[P.scene].label.toUpperCase();}
   }
   requestAnimationFrame(tick);
 }

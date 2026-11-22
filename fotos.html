@@ -241,6 +241,7 @@ async function initBases(){
   const want=new URLSearchParams(location.search).get('base');
   const cur=want||localStorage.getItem('fotos-cur');B=bases.find(b=>b.id===cur)||bases[0]||null;
 }
+let sbT=0;function saveBasesSoon(){clearTimeout(sbT);sbT=setTimeout(saveBases,500);}
 function saveBases(){const o={};bases.forEach(b=>{o[b.id]={id:b.id,name:b.name,categoria:b.categoria,user:!b.builtin,mv:b.mv,areas:b.areas};});
   try{localStorage.setItem('fotos-bases',JSON.stringify(o));if(B)localStorage.setItem('fotos-cur',B.id);}catch(e){}}
 
@@ -303,7 +304,7 @@ const ctrls={};let dirtyArt=true,dirty=true;
 const A=()=>B&&B.areas[areaIdx];
 const decimals=st=>{const s=String(st);return s.includes('.')?s.split('.')[1].length:0;};
 function getV(d){if(d.a){const a=A();return a?a[d.k]:d.v;}return P[d.k];}
-function setV(d,v,c){if(d.a){const a=A();if(!a)return;a[d.k]=d.num?+v:v;if(['piece','bgRole','inkRole','layoutVar','scale','offX','offY','rot'].includes(d.k))dirtyArt=true;saveBases();}else P[d.k]=v;dirty=true;saveSoon();if(c)commit();}
+function setV(d,v,c){lastInput=performance.now();if(d.a){const a=A();if(!a)return;a[d.k]=d.num?+v:v;if(['piece','bgRole','inkRole','layoutVar','scale','offX','offY','rot'].includes(d.k)){dirtyArt=true;artAt=performance.now();}saveBasesSoon();}else P[d.k]=v;dirty=true;saveSoon();if(c)commit();}
 function makeRow(d){
   const row=document.createElement('div');row.className='row';const lab=document.createElement('label');lab.textContent=d.l;lab.title=d.l;row.appendChild(lab);
   if(d.t==='range'){const rg=document.createElement('input');rg.type='range';rg.min=d.min;rg.max=d.max;rg.step=d.step;const nb=document.createElement('input');nb.type='number';nb.step=d.step;const dec=decimals(d.step);
@@ -398,7 +399,7 @@ function randomize(wild){
    ========================================================= */
 const glc=$('#gl'),ov=$('#ov'),octx=ov.getContext('2d');
 const gl=glc.getContext('webgl2',{preserveDrawingBuffer:true,premultipliedAlpha:false,antialias:false});
-const MAXA=4,CELL=2048;
+const MAXA=4;let CELL=1024;
 const VS=`#version 300 es
 in vec2 p;out vec2 vUv;void main(){vUv=p*.5+.5;gl_Position=vec4(p,0.,1.);}`;
 const FS=`#version 300 es
@@ -414,7 +415,7 @@ uniform vec4 uL[${MAXA}];   // opacity, light, texture, disp
 uniform vec4 uM[${MAXA}];   // gloss, depth, ref, aspect
 uniform vec4 uMetal[${MAXA}]; // rgb metal, finish
 uniform vec4 uBg[${MAXA}];    // cor do fundo da peça, tem fundo
-uniform float uExpo,uContrast,uSat,uTemp,uFade,uGrain,uVig,uLightAng;
+uniform float uCell;uniform float uExpo,uContrast,uSat,uTemp,uFade,uGrain,uVig,uLightAng;
 float hash(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
 float L(vec3 c){return dot(c,vec3(.2126,.7152,.0722));}
 vec3 base(vec2 p,float lod){return textureLod(uBase,vec2(p.x,1.-p.y),lod).rgb;}
@@ -430,7 +431,8 @@ void main(){
     if(i>=uN)break;
     vec4 G=uG[i],Lp=uL[i],M=uM[i];
     // deformação pela luminância (dobras)
-    vec2 g=vec2(L(base(p+vec2(px.x*6.,0.),3.))-L(base(p-vec2(px.x*6.,0.),3.)),L(base(p+vec2(0.,px.y*6.),3.))-L(base(p-vec2(0.,px.y*6.),3.)));
+    vec2 g=vec2(0.);
+    if(Lp.w>.001)g=vec2(L(base(p+vec2(px.x*6.,0.),3.))-L(base(p-vec2(px.x*6.,0.),3.)),L(base(p+vec2(0.,px.y*6.),3.))-L(base(p-vec2(0.,px.y*6.),3.)));
     vec2 pd=p+g*Lp.w*.012;
     vec3 q=uH[i]*vec3(pd,1.);vec2 du=q.xy/q.z;
     if(du.x<-.05||du.x>1.05||du.y<-.05||du.y>1.05)continue;
@@ -448,8 +450,9 @@ void main(){
     float shade=mix(1.,clamp(1.+(lp-ref)/den,0.,3.),Lp.y);
     float tex=1.+hp/den*Lp.z*.9;
     // normal da arte (para relevo, metal e bordado)
-    float t=1.6/${CELL}.;
-    float ax=art(i,du+vec2(t,0.),1.).a-art(i,du-vec2(t,0.),1.).a, ay=art(i,du+vec2(0.,t),1.).a-art(i,du-vec2(0.,t),1.).a;
+    float t=1.6/uCell;
+    float fn=uMetal[i].w;float ax=0.,ay=0.;
+    if(fn>.5&&fn<3.5){ax=art(i,du+vec2(t,0.),1.).a-art(i,du-vec2(t,0.),1.).a;ay=art(i,du+vec2(0.,t),1.).a-art(i,du-vec2(0.,t),1.).a;}
     vec3 n=normalize(vec3(-ax*M.y*2.5,-ay*M.y*2.5,1.));float lit=dot(n,ld)-ld.z;
     float spec=max(0.,lp-ref*1.1)*M.x;
     if(uBg[i].a>.5){col=mix(col,uBg[i].rgb*shade*tex+spec,m*Lp.x);}
@@ -497,7 +500,7 @@ function mkTex(){const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.t
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);return t;}
 const baseTex=mkTex(),atlasTex=mkTex();
 const ext=gl.getExtension('EXT_texture_filter_anisotropic');
-const [atlas,atx]=cv(CELL*2,CELL*2);
+let [atlas,atx]=cv(2048,2048);
 let baseImg=null,baseSmall=null;
 
 async function selectBase(b){
@@ -516,10 +519,10 @@ function refLum(a){ // luminância média da superfície dentro da área
 }
 function areaPx(a){const bw=baseImg.naturalWidth,bh=baseImg.naturalHeight,c=a.corners;const dist=(p,q)=>Math.hypot((p[0]-q[0])*bw,(p[1]-q[1])*bh);
   return [(dist(c[0],c[1])+dist(c[3],c[2]))/2,(dist(c[0],c[3])+dist(c[1],c[2]))/2];}
-async function buildAtlas(){
-  atx.clearRect(0,0,atlas.width,atlas.height);
+async function buildAtlas(hi=false){
+  CELL=hi?2048:1024;if(atlas.width!==CELL*2){atlas.width=atlas.height=CELL*2;}else atx.clearRect(0,0,atlas.width,atlas.height);
   for(let i=0;i<Math.min(MAXA,B.areas.length);i++){
-    const a=B.areas[i];const [w,h]=areaPx(a);const s=1600/Math.max(w,h);
+    const a=B.areas[i];const [w,h]=areaPx(a);const s=(hi?1800:900)/Math.max(w,h);
     const art=await drawPiece(a,Math.max(8,w*s),Math.max(8,h*s));
     atx.drawImage(art,(i%2)*CELL+8,Math.floor(i/2)*CELL+8,CELL-16,CELL-16);
   }
@@ -537,14 +540,14 @@ function crop(){
 function render(scale=null){
   if(!baseImg||!B)return null;
   const cr=crop();let W,H,sc;
-  if(scale==null){const k=Math.min(1,1400/Math.max(cr.W,cr.H));W=Math.round(cr.W*k);H=Math.round(cr.H*k);sc=W/1400;}
+  if(scale==null){const lim=performance.now()-lastInput<180?720:1150;const k=Math.min(1,lim/Math.max(cr.W,cr.H));W=Math.round(cr.W*k);H=Math.round(cr.H*k);sc=W/1400;}
   else{W=Math.round(cr.W*scale);H=Math.round(cr.H*scale);const lim=8192;if(Math.max(W,H)>lim){const k=lim/Math.max(W,H);W=Math.round(W*k);H=Math.round(H*k);}sc=W/1400;}
   if(glc.width!==W||glc.height!==H){glc.width=W;glc.height=H;}
   gl.viewport(0,0,W,H);gl.useProgram(prog);gl.bindVertexArray(vao);
   gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,baseTex);gl.uniform1i(U('uBase'),0);
   gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,atlasTex);gl.uniform1i(U('uAtlas'),1);
   gl.uniform4f(U('uCrop'),cr.x,cr.y,cr.w,cr.h);gl.uniform2f(U('uBaseRes'),baseImg.naturalWidth,baseImg.naturalHeight);gl.uniform2f(U('uOutRes'),W,H);
-  gl.uniform1f(U('uScale'),Math.max(1,W/1400*1.2));gl.uniform1f(U('uSeed'),7.3);
+  gl.uniform1f(U('uCell'),CELL);gl.uniform1f(U('uScale'),Math.max(1,W/1400*1.2));gl.uniform1f(U('uSeed'),7.3);
   const n=Math.min(MAXA,B.areas.length);gl.uniform1i(U('uN'),n);
   const Hs=new Float32Array(9*MAXA),R=new Float32Array(4*MAXA),G=new Float32Array(4*MAXA),Lp=new Float32Array(4*MAXA),M=new Float32Array(4*MAXA),Mt=new Float32Array(4*MAXA),Bg=new Float32Array(4*MAXA);
   for(let i=0;i<n;i++){const a=B.areas[i];const inv=inv3(squareToQuad(a.corners));
@@ -552,7 +555,7 @@ function render(scale=null){
     Hs.set([inv[0],inv[3],inv[6],inv[1],inv[4],inv[7],inv[2],inv[5],inv[8]],i*9);
     const pad=8/(CELL*2);R.set([(i%2)*.5+pad,Math.floor(i/2)*.5+pad,.5-2*pad,.5-2*pad],i*4);
     G.set([a.cyl,a.arc,a.radius,a.feather],i*4);Lp.set([a.opacity,a.light,a.texture,a.disp],i*4);
-    const [w,h]=areaPx(a);a._ref=refLum(a);M.set([a.gloss,a.depth,a._ref,w/h],i*4);
+    const [w,h]=areaPx(a);const rk=a.corners.join();if(a._refKey!==rk||a._refBase!==B.id){a._ref=refLum(a);a._refKey=rk;a._refBase=B.id;}M.set([a.gloss,a.depth,a._ref,w/h],i*4);
     const mt=hex2rgb(a.metal==='marca'?role(a.inkRole):METALS[a.metal]||METALS.ouro);Mt.set([mt[0],mt[1],mt[2],+a.finish],i*4);
     const hasBg=a.bgRole!=="none"&&a.piece!=="screen";const bc=hasBg?hex2rgb(role(a.bgRole)):[0,0,0];Bg.set([bc[0],bc[1],bc[2],hasBg?1:0],i*4);}
   gl.uniformMatrix3fv(U('uH'),false,Hs);gl.uniform4fv(U('uRect'),R);gl.uniform4fv(U('uG'),G);gl.uniform4fv(U('uL'),Lp);gl.uniform4fv(U('uM'),M);gl.uniform4fv(U('uMetal'),Mt);gl.uniform4fv(U('uBg'),Bg);
@@ -588,27 +591,29 @@ ov.addEventListener('pointerdown',e=>{if(!editing)return;const cr=crop();const [
   if(drag){commit();ov.setPointerCapture(e.pointerId);}});
 ov.addEventListener('pointermove',e=>{if(!drag)return;const cr=crop();const [sx,sy]=evPos(e);const pb=toBase(sx,sy,cr);const a=A();
   if(drag.type==='corner')a.corners[drag.k]=[pb[0],pb[1]];else{const dx=pb[0]-drag.start[0],dy=pb[1]-drag.start[1];a.corners=drag.orig.map(c=>[c[0]+dx,c[1]+dy]);}
-  dirty=true;drawOverlay();});
+  lastInput=performance.now();dirty=true;drawOverlay();});
 ov.addEventListener('pointerup',()=>{if(drag){drag=null;dirtyArt=true;saveBases();commit();}});
 function toggleEdit(){editing=!editing;$('#wrap').classList.toggle('edit',editing);$('#bEdit').classList.toggle('on',editing);drawOverlay();}
 
 /* =========================================================
    LOOP E EXPORTAÇÃO
    ========================================================= */
-let busy=false;
+let busy=false,lastInput=0,artAt=0,wasLight=false,lastSize='';
 async function tick(){
+  const now=performance.now();
   if(!busy&&B&&baseImg){
-    if(dirtyArt){busy=true;await buildAtlas();busy=false;}
-    if(dirty){const r=render();dirty=false;if(r){fit();drawOverlay();$('#cRes').textContent=`${crop().W} × ${crop().H} px · ${B.name.toUpperCase()}`;}}
+    if(dirtyArt&&now-artAt>90){busy=true;await buildAtlas();busy=false;}
+    const light=now-lastInput<180;if(wasLight&&!light)dirty=true;wasLight=light;
+    if(dirty){const r=render();dirty=false;if(r){const sz=glc.width+'x'+glc.height;if(sz!==lastSize){lastSize=sz;fit();}drawOverlay();$('#cRes').textContent=`${crop().W} × ${crop().H} px · ${B.name.toUpperCase()}`;}}
   }
   requestAnimationFrame(tick);
 }
 const slug=s=>(s||'x').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 async function exportCurrent(){
-  if(dirtyArt)await buildAtlas();
+  await buildAtlas(true);
   const r=render(+P.expScale);const jpg=P.expFmt==='jpg';
   const blob=await new Promise(res=>glc.toBlob(res,jpg?'image/jpeg':'image/png',.95));
-  download(blob,`${slug(K.name)}-${slug(B.name)}-${r.W}x${r.H}.${jpg?'jpg':'png'}`);dirty=true;return r;
+  download(blob,`${slug(K.name)}-${slug(B.name)}-${r.W}x${r.H}.${jpg?'jpg':'png'}`);dirtyArt=true;dirty=true;return r;
 }
 async function exportOne(){if(busy||!B)return;busy=true;try{const r=await exportCurrent();toast(`Exportado ${r.W}×${r.H}`);}catch(e){console.error(e);toast('Falha ao exportar');}busy=false;}
 let cancel=false;$('#ovCancel').onclick=()=>{cancel=true;};
